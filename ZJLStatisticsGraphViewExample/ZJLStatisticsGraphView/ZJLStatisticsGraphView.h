@@ -31,7 +31,7 @@ typedef NS_ENUM(NSInteger, PointType)
 @property (nonatomic, strong) UIColor *barColor;
 
 - (instancetype)initWithFrame:(CGRect)frame data:(NSArray<ZJLStatisticsPoint *> *)data;
-- (void)drawGraphWithLineType:(LineType)lineType pointType:(PointType)pointType;
+- (void)drawGraphWithLineType:(LineType)lineType pointType:(PointType)pointType animated:(BOOL)animated;
 @end
 
 #pragma mark - point object

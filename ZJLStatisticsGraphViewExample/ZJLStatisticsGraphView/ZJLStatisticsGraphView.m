@@ -35,7 +35,7 @@ static const NSInteger YAxisMaxCount = 5;
 }
 
 #pragma mark - draw the graph
-- (void)drawGraphWithLineType:(LineType)lineType pointType:(PointType)pointType
+- (void)drawGraphWithLineType:(LineType)lineType pointType:(PointType)pointType animated:(BOOL)animated
 {
     [self setupProperties];
     [self removeAllSubLayers];
@@ -46,7 +46,7 @@ static const NSInteger YAxisMaxCount = 5;
     if (self.isGrid) {
         [self drawGrid];
     }
-    [self drawLineWithType:lineType];
+    [self drawLineWithType:lineType animated:animated];
 }
 
 #pragma mark - set up properties
@@ -176,7 +176,7 @@ static const NSInteger YAxisMaxCount = 5;
 }
 
 #pragma mark - draw line
-- (void)drawLineWithType:(LineType)type
+- (void)drawLineWithType:(LineType)type animated:(BOOL)animated
 {
     UIBezierPath *path = [UIBezierPath bezierPath];
     ZJLStatisticsPoint *startPoint = _datas[0];
@@ -206,6 +206,14 @@ static const NSInteger YAxisMaxCount = 5;
     layer.fillColor = [UIColor clearColor].CGColor;
     
     [self.layer addSublayer:layer];
+    if (animated) {
+        CABasicAnimation *baseAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
+        baseAnimation.duration = 2.0;
+        baseAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+        baseAnimation.fromValue = @0.0;
+        baseAnimation.toValue = @1.0;
+        [layer addAnimation:baseAnimation forKey:@"strokeEndAnimation"];
+    }
 }
 @end
 

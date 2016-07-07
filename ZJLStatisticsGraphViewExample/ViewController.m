@@ -35,7 +35,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self.lineView drawGraphWithLineType:LineType_Straight pointType:PointType_Circle];
+    [self.lineView drawGraphWithLineType:LineType_Straight pointType:PointType_Circle animated:YES];
 }
 
 - (void)didReceiveMemoryWarning {
