@@ -43,6 +43,10 @@ static const NSInteger YAxisMaxCount = 5;
     if (self.isShowBar) {
         [self drawBar];
     }
+    if (self.isGrid) {
+        [self drawGrid];
+    }
+    [self drawLineWithType:lineType];
 }
 
 #pragma mark - set up properties
@@ -97,11 +101,123 @@ static const NSInteger YAxisMaxCount = 5;
     layer.fillColor = [UIColor clearColor].CGColor;
     layer.lineWidth = 2.0;
     [self.layer addSublayer:layer];
+    
+    [self drawAxisLabel];
+}
+
+- (void)drawAxisLabel
+{
+    //y axis label
+    for (int i = 0; i<=_yAxisCount; i++) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, MarginVertical+_yAxisPerDistance*i - _yAxisPerDistance/2, MarginHorizontal-1, _yAxisPerDistance)];
+        label.textColor = [UIColor blackColor];
+        label.text = [NSString stringWithFormat:@"%d",(int)(_maxYValue/_yAxisCount*(_yAxisCount-i))];
+        label.font = [UIFont systemFontOfSize:12.0];
+        label.textAlignment = NSTextAlignmentRight;
+        label.backgroundColor = [UIColor clearColor];
+        [self addSubview:label];
+    }
+    //x axis label
+    for (int i = 1; i<=_numberOfData; i++) {
+        ZJLStatisticsPoint *point = _datas[i-1];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(MarginHorizontal+i*_xAxisPerDistance-_xAxisPerDistance/2-5, CGRectGetHeight(_graphRect)-MarginVertical, _xAxisPerDistance, MarginVertical-1)];
+        label.textColor = [UIColor blackColor];
+        label.text = [NSString stringWithFormat:@"%.1f",point.xValue];
+        label.font = [UIFont systemFontOfSize:12.0];
+        label.textAlignment = NSTextAlignmentRight;
+        label.backgroundColor = [UIColor clearColor];
+        [self addSubview:label];
+    }
 }
 
 #pragma mark - draw bar
 - (void)drawBar
 {
-    
+    for (int i = 0; i<_numberOfData; i++) {
+        ZJLStatisticsPoint *point = _datas[i];
+        CGPoint start = CGPointMake(MarginVertical + (i+1)*_xAxisPerDistance, MarginVertical+(1-point.yValue/_maxYValue)*_graphHeight);
+        CGFloat width = _xAxisPerDistance<=20?10:20;
+        CGRect bar = CGRectMake(start.x-width/2, start.y, width, CGRectGetHeight(_graphRect)-MarginVertical-start.y);
+        
+        UIBezierPath *path = [UIBezierPath bezierPathWithRect:bar];
+        CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+        layer.path = path.CGPath;
+        layer.strokeColor = _barColor?_barColor.CGColor:[UIColor blueColor].CGColor;
+        layer.fillColor = _barColor?_barColor.CGColor:[UIColor blueColor].CGColor;;
+        
+        [self.layer addSublayer:layer];
+    }
 }
+
+#pragma mark - draw grid
+- (void)drawGrid
+{
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    
+    //draw horizontal grid line
+    for (int i = 0; i<_yAxisCount; i++) {
+        [path moveToPoint:CGPointMake(MarginHorizontal, MarginVertical + _yAxisPerDistance*i)];
+        [path addLineToPoint:CGPointMake(MarginHorizontal + _graphWidth, MarginVertical + _yAxisPerDistance*i)];
+    }
+    
+    //draw vertical grid line
+    for (int i = 1; i<=_numberOfData; i++) {
+        [path moveToPoint:CGPointMake(MarginHorizontal+_xAxisPerDistance*i, MarginVertical)];
+        [path addLineToPoint:CGPointMake(MarginHorizontal+_xAxisPerDistance*i, MarginVertical+_graphHeight)];
+    }
+    
+    CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+    layer.path = path.CGPath;
+    layer.strokeColor = [UIColor whiteColor].CGColor;
+    layer.fillColor = [UIColor clearColor].CGColor;
+    layer.lineWidth = 0.5;
+    
+    [self.layer addSublayer:layer];
+}
+
+#pragma mark - draw line
+- (void)drawLineWithType:(LineType)type
+{
+    UIBezierPath *path = [UIBezierPath bezierPath];
+    ZJLStatisticsPoint *startPoint = _datas[0];
+    [path moveToPoint:CGPointMake(MarginHorizontal+_xAxisPerDistance, MarginVertical+(1-startPoint.yValue/_maxYValue)*_graphHeight)];
+    switch (type) {
+        case LineType_Straight:
+            for (int i = 1; i<_numberOfData; i++) {
+                ZJLStatisticsPoint *now = _datas[i];
+                [path addLineToPoint:CGPointMake(MarginHorizontal+_xAxisPerDistance*(i+1), MarginVertical+(1-now.yValue/_maxYValue)*_graphHeight)];
+            }
+            break;
+            
+        case LineType_Curve:
+            for (int i = 1; i<_numberOfData; i++) {
+                ZJLStatisticsPoint *prePoint = _datas[i-1];
+                ZJLStatisticsPoint *nowPoint = _datas[i];
+                CGPoint pre = CGPointMake(MarginHorizontal+_xAxisPerDistance*i, MarginVertical+(1-prePoint.yValue/_maxYValue)*_graphHeight);
+                CGPoint now = CGPointMake(MarginHorizontal+_xAxisPerDistance*(i+1), MarginVertical+(1-nowPoint.yValue/_maxYValue)*_graphHeight);
+                [path addCurveToPoint:now controlPoint1:CGPointMake((pre.x+now.x)/2, pre.y) controlPoint2:CGPointMake((pre.x+now.x)/2, now.y)];
+            }
+            break;
+    }
+    
+    CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+    layer.path = path.CGPath;
+    layer.strokeColor = _lineColor?_lineColor.CGColor:[UIColor redColor].CGColor;
+    layer.fillColor = [UIColor clearColor].CGColor;
+    
+    [self.layer addSublayer:layer];
+}
+@end
+
+@implementation ZJLStatisticsPoint
+
+- (instancetype)initWithX:(CGFloat)xValue Y:(CGFloat)yValue
+{
+    if (self = [super init]) {
+        _xValue = xValue;
+        _yValue = yValue;
+    }
+    return self;
+}
+
 @end

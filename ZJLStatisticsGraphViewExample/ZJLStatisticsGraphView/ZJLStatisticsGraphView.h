@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, PointType)
 @property (nonatomic, assign) BOOL isShowPoint;
 @property (nonatomic, assign) BOOL isShowBar;
 @property (nonatomic, strong) UIColor *lineColor;
-@property (nonatomic, strong) UIColor *pointColor;
+@property (nonatomic, strong) UIColor *barColor;
 
 - (instancetype)initWithFrame:(CGRect)frame data:(NSArray<ZJLStatisticsPoint *> *)data;
 - (void)drawGraphWithLineType:(LineType)lineType pointType:(PointType)pointType;
@@ -38,6 +38,8 @@ typedef NS_ENUM(NSInteger, PointType)
 @interface ZJLStatisticsPoint : NSObject
 @property (nonatomic, assign) CGFloat xValue;
 @property (nonatomic, assign) CGFloat yValue;
+
+- (instancetype)initWithX:(CGFloat)xValue Y:(CGFloat)yValue;
 @end
 
 
