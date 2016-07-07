@@ -46,6 +46,9 @@ static const NSInteger YAxisMaxCount = 5;
     if (self.isGrid) {
         [self drawGrid];
     }
+    if (self.isShowValue) {
+        [self drawValues];
+    }
     [self drawLineWithType:lineType animated:animated];
     [self drawPointsWithType:pointType];
 }
@@ -245,6 +248,22 @@ static const NSInteger YAxisMaxCount = 5;
             }
             break;
     }
+}
+
+#pragma mark - draw values
+- (void)drawValues{
+    for (int i = 0; i < _numberOfData; i ++) {
+        ZJLStatisticsPoint *value = _datas[i];
+        CGPoint nowPoint = CGPointMake(MarginHorizontal + _xAxisPerDistance * (i + 1), MarginVertical + (1 - value.yValue / _maxYValue) * _graphHeight);
+        UILabel *lbl = [[UILabel alloc] initWithFrame:CGRectMake(nowPoint.x - _xAxisPerDistance/2.0-5, nowPoint.y - 20, _xAxisPerDistance+10, 20)];
+        lbl.textColor = [UIColor blackColor];
+        lbl.textAlignment = NSTextAlignmentCenter;
+        lbl.text = [NSString stringWithFormat:@"%.f",value.yValue];
+        lbl.font = [UIFont systemFontOfSize:14];
+        lbl.adjustsFontSizeToFitWidth = YES;
+        [self addSubview:lbl];
+    }
+    
 }
 
 @end
