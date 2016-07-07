@@ -120,11 +120,11 @@ static const NSInteger YAxisMaxCount = 5;
     //x axis label
     for (int i = 1; i<=_numberOfData; i++) {
         ZJLStatisticsPoint *point = _datas[i-1];
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(MarginHorizontal+i*_xAxisPerDistance-_xAxisPerDistance/2-5, CGRectGetHeight(_graphRect)-MarginVertical, _xAxisPerDistance, MarginVertical-1)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(MarginHorizontal+i*_xAxisPerDistance-_xAxisPerDistance/2, CGRectGetHeight(_graphRect)-MarginVertical, _xAxisPerDistance, MarginVertical-1)];
         label.textColor = [UIColor blackColor];
         label.text = [NSString stringWithFormat:@"%.1f",point.xValue];
         label.font = [UIFont systemFontOfSize:12.0];
-        label.textAlignment = NSTextAlignmentRight;
+        label.textAlignment = NSTextAlignmentCenter;
         label.backgroundColor = [UIColor clearColor];
         [self addSubview:label];
     }

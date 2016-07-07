@@ -25,9 +25,10 @@
     ZJLStatisticsPoint *point5 = [[ZJLStatisticsPoint alloc] initWithX:5 Y:20.0];
     NSArray *data = @[point1,point2,point3,point4,point5];
     self.lineView = [[ZJLStatisticsGraphView alloc] initWithFrame:CGRectMake(20, 20, self.view.frame.size.width-40, 200) data:data];
-    self.lineView.backgroundColor = [UIColor grayColor];
+    self.lineView.backgroundColor = [UIColor lightGrayColor];
     self.lineView.isShowBar = YES;
     self.lineView.isGrid = YES;
+    self.lineView.barColor = [UIColor yellowColor];
     [self.view addSubview:self.lineView];
 }
 
