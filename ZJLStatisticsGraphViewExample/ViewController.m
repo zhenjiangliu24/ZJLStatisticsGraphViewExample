@@ -29,6 +29,7 @@
     self.lineView.isShowBar = YES;
     self.lineView.isGrid = YES;
     self.lineView.barColor = [UIColor yellowColor];
+    self.lineView.lineColor = [UIColor redColor];
     [self.view addSubview:self.lineView];
 }
 

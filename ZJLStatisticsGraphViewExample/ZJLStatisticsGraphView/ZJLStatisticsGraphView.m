@@ -47,6 +47,7 @@ static const NSInteger YAxisMaxCount = 5;
         [self drawGrid];
     }
     [self drawLineWithType:lineType animated:animated];
+    [self drawPointsWithType:pointType];
 }
 
 #pragma mark - set up properties
@@ -215,6 +216,37 @@ static const NSInteger YAxisMaxCount = 5;
         [layer addAnimation:baseAnimation forKey:@"strokeEndAnimation"];
     }
 }
+
+#pragma mark - draw points
+- (void)drawPointsWithType:(PointType)pointType
+{
+    switch (pointType) {
+        case PointType_Rect:
+            for (int i = 0; i<_numberOfData; i++) {
+                ZJLStatisticsPoint *value = _datas[i];
+                CGPoint point = CGPointMake(MarginHorizontal+(i+1)*_xAxisPerDistance, MarginVertical+(1-value.yValue/_maxYValue)*_graphHeight);
+                CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+                layer.frame = CGRectMake(point.x-2.5, point.y-2.5, 5, 5);
+                layer.backgroundColor = _lineColor?_lineColor.CGColor:[UIColor blackColor].CGColor;
+                [self.layer addSublayer:layer];
+            }
+            break;
+            
+        case PointType_Circle:
+            for (int i = 0; i<_numberOfData; i++) {
+                ZJLStatisticsPoint *value = _datas[i];
+                CGPoint point = CGPointMake(MarginHorizontal+(i+1)*_xAxisPerDistance, MarginVertical+(1-value.yValue/_maxYValue)*_graphHeight);
+                UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(point.x-2.5, point.y-2.5, 5, 5) cornerRadius:2.5];
+                CAShapeLayer *layer = [[CAShapeLayer alloc] init];
+                layer.path = path.CGPath;
+                layer.strokeColor = _lineColor?_lineColor.CGColor:[UIColor blackColor].CGColor;
+                layer.fillColor = _lineColor?_lineColor.CGColor:[UIColor blackColor].CGColor;
+                [self.layer addSublayer:layer];
+            }
+            break;
+    }
+}
+
 @end
 
 @implementation ZJLStatisticsPoint
